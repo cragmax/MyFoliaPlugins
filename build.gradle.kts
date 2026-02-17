@@ -29,3 +29,37 @@ subprojects {
         }
     }
 }
+
+tasks.register("deployAll") {
+    onlyIf { project.findProperty("isDev") == "true" }
+    outputs.upToDateWhen { false }
+
+    subprojects.forEach { dependsOn(it.tasks.named("jar")) }
+
+    val rconPassword = project.property("rconPassword") as String
+    val serverDir = project.property("serverDir") as String
+    val pluginsDir = project.property("serverPluginsPath") as String
+
+    doFirst {
+        ServerUtils.stopServer(rconPassword)
+
+        subprojects.forEach { sub ->
+            val jarTask = sub.tasks.named("jar").get() as Jar
+            fileTree(pluginsDir) {
+                include("${sub.name}*.jar")
+            }.forEach { file ->
+                println("Deleting: ${file.name}")
+                file.delete()
+            }
+            copy {
+                from(jarTask.outputs.files)
+                into(pluginsDir)
+            }
+            println("Deployed: ${sub.name}")
+        }
+    }
+
+    doLast {
+        ServerUtils.startServer(serverDir)
+    }
+}

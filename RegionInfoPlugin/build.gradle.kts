@@ -1,21 +1,41 @@
-tasks.register<Copy>("deployPlugin") {
+tasks.register<Copy>("deploy") {
     dependsOn(tasks.jar)
-    onlyIf { project.property("isDev") == "true" }
+    onlyIf { project.findProperty("isDev") == "true" }
     outputs.upToDateWhen { false }
+
+    val rconPassword = project.property("rconPassword") as String
+    val serverDir = project.property("serverDir") as String
+    val pluginsDir = project.property("serverPluginsPath") as String
+    val isDeployAll = project.rootProject.extensions.extraProperties.has("isDeployAll")
+    val pluginName = project.name
+    val pluginFileTree = project.fileTree(pluginsDir) {
+        include("${pluginName}*.jar")
+    }
+
     doFirst {
-        val pluginsDir = project.property("serverPluginsPath") as String
-        fileTree(pluginsDir) {
-            include("${project.name}*.jar")
-        }.forEach { file ->
+        if (!isDeployAll) {
+            ServerUtils.stopServer(rconPassword)
+        }
+
+        pluginFileTree.forEach { file ->
             println("Deleting: ${file.name}")
             file.delete()
         }
+
+        println("Deploying: $pluginName")
     }
+
     from(tasks.jar.map { it.outputs.files })
-    into(project.property("serverPluginsPath") as String)
+    into(pluginsDir)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    doLast {
+        if (!isDeployAll) {
+            ServerUtils.startServer(serverDir)
+        }
+    }
 }
 
 tasks.named("build") {
-    finalizedBy("deployPlugin")
+    finalizedBy("deploy")
 }
