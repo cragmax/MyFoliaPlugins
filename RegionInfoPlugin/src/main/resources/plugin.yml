@@ -1,0 +1,11 @@
+name: RegionInfo
+version: 1.0-SNAPSHOT
+main: com.cragmax.regioninfo.RegionInfo
+api-version: '1.21'
+folia-supported: true
+
+commands:
+  regioninfo:
+    description: Shows region info
+    usage: /regioninfo
+    permission: myfirstplugin.regioninfo
