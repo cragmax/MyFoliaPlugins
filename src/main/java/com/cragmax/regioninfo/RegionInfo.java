@@ -1,11 +1,11 @@
-package com.glyn.myfirstplugin;
+package com.cragmax.regioninfo;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 
-public class MyFirstPlugin extends JavaPlugin {
+public class RegionInfo extends JavaPlugin {
 
     @Override
     public void onEnable() {
@@ -13,11 +13,16 @@ public class MyFirstPlugin extends JavaPlugin {
                 .append(Component.text("[", NamedTextColor.DARK_GRAY))
                 .append(Component.text("✓", NamedTextColor.GREEN, TextDecoration.BOLD))
                 .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-                .append(Component.text("MyFirstPlugin ", NamedTextColor.AQUA))
+                .append(Component.text("RegionInfo ", NamedTextColor.AQUA))
                 .append(Component.text("enabled!", NamedTextColor.GREEN))
                 .build();
 
         getComponentLogger().info(enableMessage);
+
+        var regioninfoCmd = getCommand("regioninfo");
+        if (regioninfoCmd != null) {
+            regioninfoCmd.setExecutor(new RegionInfoCommand(this));
+        }
     }
 
     @Override
@@ -26,7 +31,7 @@ public class MyFirstPlugin extends JavaPlugin {
                 .append(Component.text("[", NamedTextColor.DARK_GRAY))
                 .append(Component.text("✗", NamedTextColor.RED, TextDecoration.BOLD))
                 .append(Component.text("] ", NamedTextColor.DARK_GRAY))
-                .append(Component.text("MyFirstPlugin ", NamedTextColor.AQUA))
+                .append(Component.text("RegionInfo ", NamedTextColor.AQUA))
                 .append(Component.text("disabled!", NamedTextColor.RED))
                 .build();
 
