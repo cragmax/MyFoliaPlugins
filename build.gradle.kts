@@ -1,8 +1,12 @@
+val gitBranch = providers.exec {
+    commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
+}.standardOutput.asText.get().trim()
+
 subprojects {
     apply(plugin = "java")
 
     group = "com.cragmax"
-    version = "1.0-SNAPSHOT"
+    version = "1.0-SNAPSHOT-$gitBranch"
 
     repositories {
         maven {
