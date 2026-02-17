@@ -27,7 +27,7 @@ tasks.register<Copy>("deploy") {
 
     from(tasks.jar.map { it.outputs.files })
     into(pluginsDir)
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    //duplicatesStrategy = DuplicatesStrategy.INCLUDE
 
     doLast {
         if (!isDeployAll) {
