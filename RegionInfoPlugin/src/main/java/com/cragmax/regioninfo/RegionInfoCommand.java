@@ -19,7 +19,7 @@ public class RegionInfoCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command,
-                             @NotNull String label, @NotNull String[] args) {
+                             @NotNull String label, @NotNull String @NotNull [] args) {
 
         if (!(sender instanceof Player player)) {
             sender.sendMessage(Component.text("This command can only be used by players!",
