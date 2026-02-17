@@ -1,0 +1,5 @@
+name: MyFirstPlugin
+version: 1.0-SNAPSHOT
+main: com.glyn.myfirstplugin.MyFirstPlugin
+api-version: '1.21'
+folia-supported: true
