@@ -1,1 +1,2 @@
-rootProject.name = "MyFoliaMods"
+rootProject.name = "MyFoliaPlugins"
+include("RegionInfoPlugin")
