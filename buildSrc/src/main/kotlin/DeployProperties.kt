@@ -1,4 +1,4 @@
-import org.gradle.api.Project
+import org.gradle.api.provider.ProviderFactory
 
 data class DeployProperties(
     val rconPassword: String,
@@ -12,13 +12,19 @@ data class DeployProperties(
     val isDev: Boolean
 ) {
     companion object {
-        fun from(project: Project): DeployProperties {
+        // --------------------------------------------------------
+        // Takes ProviderFactory instead of Project to avoid
+        // Task.project deprecation warnings when called from doLast.
+        // Capture project.providers at configuration time and pass
+        // it here at execution time.
+        // --------------------------------------------------------
+        fun from(providers: ProviderFactory): DeployProperties {
             fun require(name: String): String =
-                project.providers.gradleProperty(name).orNull
+                providers.gradleProperty(name).orNull
                     ?: error("[deploy] Missing required property '$name' in gradle.properties")
 
             // Resolved separately as it is optional - defaults to false if missing
-            val isDev = project.providers.gradleProperty("isDev").orNull == "true"
+            val isDev = providers.gradleProperty("isDev").orNull == "true"
 
             return DeployProperties(
                 rconPassword = require("rconPassword"),

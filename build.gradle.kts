@@ -43,24 +43,27 @@ tasks.register("deployAll") {
 
     // Capture at configuration time to avoid Task.project deprecation
     val subprojectList = subprojects.toList()
+    val rootDir = rootProject.projectDir
+    val gradleProviders = providers
 
     onlyIf {
-        val isDev = providers.gradleProperty("isDev").orNull == "true"
+        val isDev = gradleProviders.gradleProperty("isDev").orNull == "true"
         if (!isDev) println("[deploy] Skipping deployAll - isDev is not true in gradle.properties")
         isDev
     }
 
     doLast {
-        val props = DeployProperties.from(project)
+        // gradleProviders captured at configuration time - no Task.project access at execution time
+        val props = DeployProperties.from(gradleProviders)
 
         ServerUtils.stopServer(props.rconPassword, props.mcPort, props.rconPort)
 
         subprojectList.forEach { sub ->
             val jarTask = sub.tasks.named<Jar>("jar").get()
-            DeployUtils.deployJar(project, props, sub.name, jarTask.outputs.files)
+            DeployUtils.deployJar(rootDir, props, sub.name, jarTask.outputs.files)
         }
 
-        DeployUtils.copyStartBat(project, props)
+        DeployUtils.copyStartBat(rootDir, props)
         ServerUtils.startServer(props.serverDir, props.serverMinMemory, props.serverMaxMemory, props.serverJar)
     }
 }
