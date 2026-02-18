@@ -88,15 +88,22 @@ object ServerUtils {
     // ProcessBuilder runs from serverDir so the server jar is found.
     // ============================================================
     fun startServer(serverDir: String, minMemory: String, maxMemory: String, serverJar: String) {
+        val dir = File(serverDir)
+        val jar = File(dir, serverJar)
+
+        if (!jar.exists()) {
+            error("[deploy] Server jar not found at: ${jar.absolutePath} — check serverDir and serverJar in gradle.properties")
+        }
+
         println("[deploy] Starting server in $serverDir...")
 
         ProcessBuilder(
             "cmd", "/c", "start", "cmd", "/k",
             "java", "-Xms$minMemory", "-Xmx$maxMemory", "-jar", serverJar, "--nogui"
         )
-            .directory(File(serverDir))
+            .directory(dir)
             .start()
 
-        println("[deploy] Server starting in background.")
+        println("[deploy] Server starting in new terminal window.")
     }
 }
