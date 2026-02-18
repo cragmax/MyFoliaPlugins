@@ -1,0 +1,9 @@
+isDev=true
+serverDir=
+serverPluginsPath=
+rconPassword=
+serverMinMemory=4G
+serverMaxMemory=4G
+serverJar=folia.jar
+mcPort=25565
+rconPort=25575
