@@ -60,7 +60,7 @@ tasks.register("deployAll") {
 
         subprojectList.forEach { sub ->
             val jarTask = sub.tasks.named<Jar>("jar").get()
-            DeployUtils.deployJar(rootDir, props, sub.name, jarTask.outputs.files)
+            DeployUtils.deployJar(props, sub.name, jarTask.outputs.files)
         }
 
         DeployUtils.copyStartBat(rootDir, props)

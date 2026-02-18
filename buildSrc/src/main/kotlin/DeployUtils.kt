@@ -35,7 +35,7 @@ object DeployUtils {
     // changes in the jar name don't leave stale jars.
     // e.g. MyPlugin-1.0-SNAPSHOT-feature-my-thing.jar
     // ============================================================
-    fun deployJar(rootDir: File, props: DeployProperties, pluginName: String, jarFiles: FileCollection) {
+    fun deployJar(props: DeployProperties, pluginName: String, jarFiles: FileCollection) {
         validateServerDir(props)
 
         val pluginsDir = File(props.serverPluginsPath)

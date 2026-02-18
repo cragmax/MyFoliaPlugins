@@ -27,7 +27,7 @@ tasks.register("deploy") {
         val jarTask = tasks.named<Jar>("jar").get()
 
         ServerUtils.stopServer(props.rconPassword, props.mcPort, props.rconPort)
-        DeployUtils.deployJar(rootDir, props, pluginName, jarTask.outputs.files)
+        DeployUtils.deployJar(props, pluginName, jarTask.outputs.files)
         DeployUtils.copyStartBat(rootDir, props)
         ServerUtils.startServer(props.serverDir, props.serverMinMemory, props.serverMaxMemory, props.serverJar)
     }
