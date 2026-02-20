@@ -1,8 +1,3 @@
-// ============================================================
-// Root build.gradle.kts
-// Shared subproject configuration and deployAll task.
-// ============================================================
-
 val gitBranch = providers.exec {
     commandLine("git", "rev-parse", "--abbrev-ref", "HEAD")
 }.standardOutput.asText.get().trim().replace("/", "-")
@@ -41,7 +36,7 @@ tasks.register("deployAll") {
     subprojects.forEach { dependsOn(it.tasks.named("jar")) }
     outputs.upToDateWhen { false }
 
-    // Capture at configuration time to avoid Task.project deprecation
+    // Captured at configuration time to avoid Task.project deprecation warnings
     val subprojectList = subprojects.toList()
     val rootDir = rootProject.projectDir
     val gradleProviders = providers
@@ -53,17 +48,16 @@ tasks.register("deployAll") {
     }
 
     doLast {
-        // gradleProviders captured at configuration time - no Task.project access at execution time
         val props = DeployProperties.from(gradleProviders)
 
-        ServerUtils.stopServer(props.rconPassword, props.mcPort, props.rconPort)
+        // Single stop/start cycle across all plugins - more efficient than deploy task per plugin
+        ServerUtils.stopServer(props)
 
         subprojectList.forEach { sub ->
             val jarTask = sub.tasks.named<Jar>("jar").get()
             DeployUtils.deployJar(props, sub.name, jarTask.outputs.files)
         }
 
-        DeployUtils.copyStartBat(rootDir, props)
-        ServerUtils.startServer(props.serverDir, props.serverMinMemory, props.serverMaxMemory, props.serverJar)
+        DeployUtils.startServer(rootDir, props)
     }
 }
