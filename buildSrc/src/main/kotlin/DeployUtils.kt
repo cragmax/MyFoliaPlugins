@@ -90,8 +90,26 @@ object DeployUtils {
         copyFileToServer(templateFile, File(serverDir, "server.properties"))
     }
 
+    fun copyOpsJson(rootDir: File, props: DeployProperties) {
+        val templateFile = File(rootDir, "deploy/ops.json")
+        val serverDir = File(props.effectiveServerDir)
+
+        if (!serverDir.exists()) {
+            println("[deploy] WARNING: Server directory not found: ${props.effectiveServerDir} — skipping ops.json copy")
+            return
+        }
+
+        if (!templateFile.exists()) {
+            println("[deploy] WARNING: deploy/ops.json not found — skipping ops.json copy")
+            return
+        }
+
+        copyFileToServer(templateFile, File(serverDir, "ops.json"))
+    }
+
     fun startServer(rootDir: File, props: DeployProperties) {
         copyServerProperties(rootDir, props)
+        copyOpsJson(rootDir, props)
         copyStartBat(rootDir, props)
         if (props.serverRemote) {
             ServerUtils.launchServerProcessRemote(props)
