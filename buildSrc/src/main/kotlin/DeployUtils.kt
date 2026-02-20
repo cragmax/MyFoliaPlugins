@@ -12,12 +12,12 @@ object DeployUtils {
         }
     }
 
-    private fun copyFileToServer(templateFile: File, destFile: File, label: String) {
+    private fun copyFileToServer(templateFile: File, destFile: File) {
         try {
             templateFile.copyTo(destFile, overwrite = true)
-            println("[deploy] Copied $label -> ${destFile.parent}")
+            println("[deploy] Copied ${templateFile.name} -> ${destFile.parent}")
         } catch (e: Exception) {
-            println("[deploy] WARNING: Failed to copy $label - ${e.message}. Continuing deploy...")
+            println("[deploy] WARNING: Failed to copy ${templateFile.name} - ${e.message}. Continuing deploy...")
         }
     }
 
@@ -87,7 +87,7 @@ object DeployUtils {
             return
         }
 
-        copyFileToServer(templateFile, File(serverDir, "server.properties"), "server.properties")
+        copyFileToServer(templateFile, File(serverDir, "server.properties"))
     }
 
     fun startServer(rootDir: File, props: DeployProperties) {
